@@ -137,11 +137,12 @@ module Kikubari
       #
       def after_deploy_run
         return unless has_after_deploy_run_commands
+        out = Array.new
         @logger.head "Executing After Deploy"
         @config.after["run"].each do |run_task|
-          @logger.run(run_task, @config.env_time_folder) 
-          y %x{ cd #{@config.env_time_folder} ; #{run_task} }
+          out.push(execute_shell(run_task) )
         end
+        out
       end
       
       
@@ -151,11 +152,26 @@ module Kikubari
       
       def before_deploy_run
         return unless has_before_deploy_run_commands
+        out = Array.new
         @logger.head "Executing Before Deploy"
         @config.before["run"].each do |run_task|
-          @logger.run(run_task, @config.env_time_folder) 
-          y %x{ cd #{@config.env_time_folder} ; #{run_task} }
+          out.push(execute_shell(run_task) )
         end
+        out
+      end
+      
+      def execute_shell(command)
+        @logger.run(command, @config.env_time_folder) 
+        temp = capture_stderr "cd #{@config.env_time_folder} ; #{command} "
+        @logger.result(temp[:stdout]) if temp[:stdout] != ""
+        @logger.error(temp[:stderr]) if temp[:stderr] != ""
+        temp
+      end
+      
+      
+      def capture_stderr ( command )
+       stdin, stdout, stderr = Open3.popen3( command )
+       ({ :stdout => stdout.readlines.join(""), :stderr => stderr.readlines.join("") })
       end
       
       ##

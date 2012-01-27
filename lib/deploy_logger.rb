@@ -16,7 +16,14 @@ module Kikubari
           p "Executing: '#{message}' "
           p "   time #{DateTime.now}"
           p "   in folder: #{folder} " unless folder.nil?
-          p ""
+        end
+        
+        def error ( message )
+          p "Error: '#{message}' "
+        end
+        
+        def result ( message )
+          p "Out: '#{message}' "
         end
     
     end

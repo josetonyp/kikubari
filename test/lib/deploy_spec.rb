@@ -73,5 +73,22 @@ describe Kikubari::Deploy::Deployer do
     @deployer.after_deploy_run.should satisfy { |deployer| File.directory?("#{@config.env_time_folder}/new_folder") } 
   end
   
+  it "should capture STDERR messages in a variable is command is not valid" do 
+    @deployer.create_deploy_structure
+    @deployer.config.after['run'] = [ 'This is not a command' ]
+    out = @deployer.after_deploy_run
+    out.count.should == 1
+    out[0][:stdout].should == ""
+    out[0][:stderr].should_not == ""
+  end
+  
+  it "should not capture STDERR messages in a variable if command is valid" do 
+    @deployer.create_deploy_structure
+    @deployer.config.after['run'] = [ 'ls -lah' ]
+    out = @deployer.after_deploy_run
+    out.count.should == 1
+    out[0][:stdout].should_not == ""
+    out[0][:stderr].should == ""
+  end
   
 end
