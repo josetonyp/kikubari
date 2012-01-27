@@ -38,6 +38,15 @@ describe Kikubari::Deploy::Deployer do
     @deployer.create_structure.create_sylinked_folders.should satisfy{ |deployer| File.symlink?( "#{deployer.config.env_time_folder}/cache") }  
   end
   
+  it "should not create the symlinked folder is folder already exist" do
+    @deployer.create_environment_folder.create_version_folder.create_current_symlink_folder
+    @deployer.create_structure
+    FileUtils.mkdir_p "#{@config.env_time_folder}/cache"
+    expect {
+      @deployer.create_sylinked_folders
+    }.should raise_error
+  end
+  
   it "should verify a file in the folder and raise an error" do
     @deployer.create_environment_folder.create_version_folder.create_current_symlink_folder
     expect{@deployer.test_files}.should raise_error

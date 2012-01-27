@@ -85,7 +85,8 @@ module Kikubari
       def create_sylinked_folders
           @config.do["folder_symbolic_links"].each do |folder|
             p "- creating: #{@config.env_time_folder}/#{folder[1]}"
-            create_symlink( folder )
+            raise "Folder: #{@config.env_time_folder}/#{folder[1]} already exists and the symlink can't be created" if File.directory?("#{@config.env_time_folder}/#{folder[1]}") 
+            create_symlink( folder ) 
           end
           self
       end
