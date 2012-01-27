@@ -1,0 +1,100 @@
+#!/usr/bin/env ruby
+require 'date'
+require 'getoptlong'
+require 'fileutils'
+require 'yaml'
+require 'pathname'
+
+Dir[ File.join(File.dirname(__FILE__), *%w[.. lib ** *]) ].each{ |file| require file unless File.directory? file }
+
+##Globals
+debug, dry_run, rollback = false, false, false
+parser = GetoptLong.new
+
+parser.set_options( ["-D", "--debug", GetoptLong::NO_ARGUMENT],
+                    ["-d", "--dry", GetoptLong::NO_ARGUMENT],
+                    ["-b", "--rollback", GetoptLong::NO_ARGUMENT]
+                    )                   
+                    
+loop do 
+  begin
+      opt, arg = parser.get
+      break if not opt
+      
+      case opt
+        when "-D"
+          debug = true;
+          break
+        when "-d"
+          dry_run = true;
+        when "-b"
+          rollback = true;
+      end
+    
+    rescue => err
+      break
+    end
+end  
+
+  if (!ARGV.first.nil? and File.directory? ARGV.first.to_s)
+      folder = ARGV.first.to_s
+  else
+    
+    begin
+
+    print "Please insert the project folder to deploy: "
+    folder = gets.chomp
+
+    end until begin
+        
+            ##FileUtils.cd folder 
+            puts "Deploying to #{folder}"
+            true
+          rescue Exception => e  
+            print e.message
+            puts e.backtrace.inspect
+            false
+          end 
+  
+  end
+
+
+p "Deploying to #{ Pathname.new( folder ).realpath }/..."
+
+  
+  if( !ARGV[1].nil? )
+      
+      env_folder = ARGV[1].to_s
+      
+  else
+    
+    begin
+    
+    print "Production [1] or preproduction [2] ? (1,2) : "
+    environment = gets.chomp
+
+    end until begin
+                if environment =~ /1|2/
+                  true
+                else
+                  false
+                end 
+              rescue Exception => e  
+                      print e.message
+                      puts e.backtrace.inspect
+                      false
+              end
+
+    case environment
+      when "1" 
+        env_folder = "production"
+      when "2"
+        env_folder = "preproduction"
+    end
+
+ end
+
+p "Deploying on environment < #{ env_folder } >..."
+
+Kikubari::Deploy.new(Kikubari::Deploy::Configuration.new( "#{folder}/deploy.yml", :deploy_folder => folder, :debug => debug, :dry_run => dry_run , :environment => env_folder, :rollback => rollback ))
+

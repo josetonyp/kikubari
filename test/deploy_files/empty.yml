@@ -1,0 +1,13 @@
+# Deploy example sheet for a Symfony 1.4 and MySQL project
+#
+# Author::    Jose A Pio  (mailto:josetonyp@gmail.com)
+# Copyright:: Copyright (c) 2011 
+# License::   Distributes under the same terms as Ruby
+#
+
+## Configurations Parameters
+config:
+     
+## Task actions for deployers
+## At versión 1 deployers should know the task order 
+do:

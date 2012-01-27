@@ -15,12 +15,17 @@ require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "kikubari"
-  gem.homepage = "http://github.com/josetonyp/kikubari"
+  gem.homepage = "http://github.com:josetonyp/kikubari"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
-  gem.email = "josetonyp@acilia.es"
+  gem.summary = %Q{ Naive multiframework deploy system }
+  gem.description = %Q{ Naive multiframework deployer for handle server deployments with some care about the code replacement. Also an experimental project.}
+  gem.email = "josetonyp@latizana.com"
   gem.authors = ["Jose Antonio Pio Gil"]
+  
+  gem.bindir = 'bin'  
+  gem.executables = ['deploy']
+  gem.default_executable = 'deploy'
+  
   # dependencies defined in Gemfile
 end
 Jeweler::RubygemsDotOrgTasks.new

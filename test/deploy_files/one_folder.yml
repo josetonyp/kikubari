@@ -1,0 +1,10 @@
+## Configurations Parameters
+
+config:
+## Task actions for deployers
+## At versión 1 deployers should know the task order 
+
+do:
+  # Folder structure defining the backup and mantainance folder behind the deployment process
+  folder_structure:
+    backup_mysql: 'backups/mysql/#{environment}'

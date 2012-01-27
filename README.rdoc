@@ -1,6 +1,13 @@
 = kikubari
 
-Description goes here.
+Naive deploy system for deploy agnostic code. Kikubari only take care about repository, folder structure and file configurations. It also will run before an after task from commmand line and log it to the deployment log.
+
+Usage:
+
+  * Create a deploy.yml file in your deploy folder
+  * Run deploy "path_folder" "environment"
+  * Have a beer and see it work
+  
 
 == Contributing to kikubari
  
@@ -14,6 +21,5 @@ Description goes here.
 
 == Copyright
 
-Copyright (c) 2012 Jose Antonio Pio Gil. See LICENSE.txt for
-further details.
+Copyright (c) 2012 Jose Antonio Pio Gil. See LICENSE.txt for further details.
 

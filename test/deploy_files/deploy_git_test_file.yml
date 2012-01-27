@@ -1,0 +1,28 @@
+## Configurations Parameters
+config:
+  system: git
+  origin: "git@github.com:josetonyp/sfRedisCachePlugin.git"
+  branch: master
+  history_limit: 10
+  
+## Task actions for deployers
+## At versión 1 deployers should know the task order 
+do:
+
+  # Folder structure defining the backup and mantainance folder behind the deployment process
+  folder_structure:
+    cache: 'cache/#{environment}'
+    log: 'log/#{environment}'
+    
+  # Folder links from project folder and matainance folders
+  folder_symbolic_links:
+    cache: cache
+    log: log
+
+  # Files to be tested before deployment. This files must exists or deployment will rise an exception
+  test_files:
+    test: 'log/#{environment}/test.yml'
+
+  # Links to be build from tested files. Only tested files can be converted in symlinks to the project
+  file_symbolic_link:
+    test: 'test/test.yml'
