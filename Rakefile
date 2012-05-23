@@ -21,11 +21,11 @@ Jeweler::Tasks.new do |gem|
   gem.description = %Q{ Naive multiframework deployer for handle server deployments with some care about the code replacement. Also an experimental project.}
   gem.email = "josetonyp@latizana.com"
   gem.authors = ["Jose Antonio Pio Gil"]
-  
-  gem.bindir = 'bin'  
-  gem.executables = ['deploy']
-  gem.default_executable = 'deploy'
-  
+
+  gem.bindir = 'bin'
+  gem.executables = ['kikubari']
+  gem.default_executable = 'kikubari'
+
   # dependencies defined in Gemfile
 end
 Jeweler::RubygemsDotOrgTasks.new

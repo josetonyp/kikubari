@@ -6,6 +6,7 @@ require 'yaml'
 require 'pathname'
 require "stringio"
 require 'open3'
+require 'git'
 
 Dir[ File.join(File.dirname(__FILE__), *%w[.. lib ** *]) ].each{ |file| require file unless File.directory? file }
 
@@ -16,13 +17,13 @@ parser = GetoptLong.new
 parser.set_options( ["-D", "--debug", GetoptLong::NO_ARGUMENT],
                     ["-d", "--dry", GetoptLong::NO_ARGUMENT],
                     ["-b", "--rollback", GetoptLong::NO_ARGUMENT]
-                    )                   
-                    
-loop do 
+                    )
+
+loop do
   begin
       opt, arg = parser.get
       break if not opt
-      
+
       case opt
         when "-D"
           debug = true;
@@ -32,46 +33,46 @@ loop do
         when "-b"
           rollback = true;
       end
-    
+
     rescue => err
       break
     end
-end  
+end
 
   if (!ARGV.first.nil? and File.directory? ARGV.first.to_s)
       folder = ARGV.first.to_s
   else
-    
+
     begin
 
     print "Please insert the project folder to deploy: "
     folder = gets.chomp
 
     end until begin
-        
-            ##FileUtils.cd folder 
+
+            ##FileUtils.cd folder
             puts "Deploying to #{folder}"
             true
-          rescue Exception => e  
+          rescue Exception => e
             print e.message
             puts e.backtrace.inspect
             false
-          end 
-  
+          end
+
   end
 
 
 p "Deploying to #{ Pathname.new( folder ).realpath }/..."
 
-  
+
   if( !ARGV[1].nil? )
-      
+
       env_folder = ARGV[1].to_s
-      
+
   else
-    
+
     begin
-    
+
     print "Production [1] or preproduction [2] ? (1,2) : "
     environment = gets.chomp
 
@@ -80,15 +81,15 @@ p "Deploying to #{ Pathname.new( folder ).realpath }/..."
                   true
                 else
                   false
-                end 
-              rescue Exception => e  
+                end
+              rescue Exception => e
                       print e.message
                       puts e.backtrace.inspect
                       false
               end
 
     case environment
-      when "1" 
+      when "1"
         env_folder = "production"
       when "2"
         env_folder = "preproduction"
