@@ -50,7 +50,7 @@ Gem::Specification.new do |s|
     "test/lib/deployers/symfony_git.rb",
     "test/spec_helper.rb"
   ]
-  s.homepage = "http://github.com:josetonyp/kikubari"
+  s.homepage = "https://github.com/josetonyp/kikubari"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.rubygems_version = "1.8.17"
