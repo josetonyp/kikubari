@@ -15,7 +15,7 @@ require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "kikubari"
-  gem.homepage = "http://github.com:josetonyp/kikubari"
+  gem.homepage = "https://github.com/josetonyp/kikubari"
   gem.license = "MIT"
   gem.summary = %Q{ Naive multiframework deploy system }
   gem.description = %Q{ Naive multiframework deployer for handle server deployments with some care about the code replacement. Also an experimental project.}
