@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
     "Rakefile",
     "VERSION",
     "bin/kikubari",
+    "kikubari.gemspec",
     "lib/configuration/deploy_configuration.rb",
     "lib/deploy_dir.rb",
     "lib/deploy_logger.rb",
