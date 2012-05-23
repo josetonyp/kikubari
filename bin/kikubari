@@ -8,16 +8,15 @@ require "stringio"
 require 'open3'
 require 'git'
 
-#Dir[ File.join(File.dirname(__FILE__), *%w[.. lib ** *]) ].each{ |file| require file unless File.directory? file }
 
-require "lib/configuration/deploy_configuration"
-require "lib/deploy_dir"
-require "lib/deploy_logger"
-require "lib/kikubari"
-require "lib/deployer/deployer"
-require "lib/deployer/deployer_git"
-require "lib/deployer/deployer_git_symfony"
-require "lib/deployer/deployer_git_wordpress"
+require File.join(File.dirname(__FILE__), "..", "lib", "configuration", "deploy_configuration")
+require File.join(File.dirname(__FILE__), "..", "lib", "deploy_dir" )
+require File.join(File.dirname(__FILE__), "..", "lib", "deploy_logger" )
+require File.join(File.dirname(__FILE__), "..", "lib", "kikubari" )
+require File.join(File.dirname(__FILE__), "..", "lib", "deployer", "deployer" )
+require File.join(File.dirname(__FILE__), "..", "lib", "deployer", "deployer_git" )
+require File.join(File.dirname(__FILE__), "..", "lib", "deployer", "deployer_git_symfony" )
+require File.join(File.dirname(__FILE__), "..", "lib", "deployer", "deployer_git_wordpress" )
 
 
 ##Globals
