@@ -16,6 +16,7 @@ If you need a more complex solution maybe you want to take a look on Capistrano.
 
 === Wordpress
 
+<<<<<<< HEAD
   config:
     framework: wordpress
     system: git
@@ -39,17 +40,50 @@ If you need a more complex solution maybe you want to take a look on Capistrano.
 
     test_files:
       config: 'config/#{environment}/wp-config.php'
+=======
+config:
+  framework: wordpress
+  system: git
+  origin: "git@github.com:josetonyp/iromegane.git"
+  branch: master
+  history_limit: 10
+
+do:
+  folder_structure:
+    log: 'log/#{environment}'
+    uploads: 'uploads/#{environment}'
+    config: 'config/#{environment}'
+    coda_cache: 'coda_cache/#{environment}'
+
+  folder_symbolic_links:
+    uploads: 'wp-content/uploads'
+    coda_cache: 'wp-content/themes/coda/cache'
+
+  file_symbolic_link:
+    config: 'wp-config.php'
+
+  test_files:
+    config: 'config/#{environment}/wp-config.php'
+>>>>>>> df7706639bd2783a2ed921dd1abd544d73b27256
 
 
 === Symfony
 
+<<<<<<< HEAD
   On proccess...
+=======
+On proccess...
+>>>>>>> df7706639bd2783a2ed921dd1abd544d73b27256
 
 == Ruby
 
 === Rails
 
+<<<<<<< HEAD
   On proccess...
+=======
+On proccess...
+>>>>>>> df7706639bd2783a2ed921dd1abd544d73b27256
 
 
 

@@ -6,7 +6,7 @@ source "http://rubygems.org"
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
 group :development do
-  gem "rspec", "~> 1.3.1"
+  gem "rspec"
   gem "bundler"
   gem "jeweler", "~> 1.8.3"
   gem "rcov", ">= 0"
