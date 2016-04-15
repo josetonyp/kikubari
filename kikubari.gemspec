@@ -54,7 +54,7 @@ Gem::Specification.new do |s|
   s.rubygems_version = "2.5.1"
   s.summary = "Naive multiframework deploy system"
 
-  spec.required_ruby_version = '>= 2.0.0'
+  s.required_ruby_version = '>= 2.0.0'
 
   s.add_development_dependency('pry')
   s.add_development_dependency('rspec')
