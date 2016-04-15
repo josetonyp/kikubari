@@ -51,3 +51,4 @@ pkg
 .rvmrc
 .ruby-*
 spec/project_dfolder
+kikubari-*.gem

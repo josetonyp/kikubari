@@ -56,10 +56,10 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 2.0.0'
 
-  s.add_development_dependency('pry')
-  s.add_development_dependency('rspec')
-  s.add_development_dependency('rake')
+  s.add_development_dependency('pry', '~> 0.10')
+  s.add_development_dependency('rspec', '~> 3.4')
+  s.add_development_dependency('rake', '~> 11.1')
 
-  s.add_dependency('git')
+  s.add_dependency('git', '~> 1.3')
 end
 
