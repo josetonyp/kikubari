@@ -52,3 +52,4 @@ pkg
 .ruby-*
 spec/project_dfolder
 kikubari-*.gem
+test

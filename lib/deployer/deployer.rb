@@ -87,8 +87,8 @@ module Kikubari
 
 
       def create_symlinked_files
-        @logger.print "Creating Files symbolic links"
         @config.do.link_files.each_pair do |source, target|
+          @logger.print "- linking: #{@config.env_time_folder.join(target.to_s)}"
           FileUtils.ln_s(@config.deploy_folder.join(source.to_s), @config.env_time_folder.join(target.to_s))
         end
       end
@@ -106,7 +106,7 @@ module Kikubari
       # Rotate old version folders
       #
       def rotate_folders
-        DeployDir.rotate_folders( @config.environment_folder , @config.config["history_limit"] )
+        DeployDir.rotate_folders( @config.environment_folder , @config.config.history_limit )
       end
 
 
@@ -161,10 +161,10 @@ module Kikubari
       def deploy
           before_deploy_run
         @logger.head "Executing Deploy"
-        test_files  if @config.do.test_files && !@config.do["test_files"].empty?
+        test_files  if @config.do.test_files
           do_deploy
-        create_sylinked_folders if @config.do.folder_symbolic_links && !@config.do["folder_symbolic_links"].empty?
-        create_symlinked_files if @config.do.file_symbolic_link && !@config.do["file_symbolic_link"].empty?
+        create_sylinked_folders
+        create_symlinked_files if @config.do.link_files
         create_current_symlink_folder
         rotate_folders
           after_deploy_run

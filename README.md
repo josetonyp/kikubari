@@ -8,50 +8,62 @@ If you need a more complex solution maybe you want to take a look on Capistrano.
 
 ## Usage:
 
-  Create a *deploy.yml* file in your deploy target folder
-  Run *kikubari*:: */path_to_folder* or ./ *"environment_name"*
-  Have a beer and see it work
+* Create a *deploy.yml* file in your deploy target folder
+* Run *kikubari*:: */path_to_folder* or ./
+* Have a beer and see it work
 
-# Examples of a deploy.yml's files
+```
+project
+│   deploy.yml
+│   ...
 
-## PHP
+```
+
+```bash
+  kikubari .
+```
+
+
+Result:
+
+```
+project
+│   deploy.yml
+│
+└── releases
+│   │   12345678
+│   │   current
+│
+└── your_folder
+    │   your_files
+
+```
+
+# Examples
 
 ### Wordpress
+
+```ruby
 
   config:
     framework: wordpress
     system: git
-    origin: "git@github.com:josetonyp/iromegane.git"
+    origin: "git@github.com:josetonyp/path_to_project.git"
     branch: master
     history_limit: 10
 
   do:
     folder_structure:
-      log: 'log/#{environment}'
-      uploads: 'uploads/#{environment}'
-      config: 'config/#{environment}'
-      coda_cache: 'coda_cache/#{environment}'
+      log: 'log'
+      uploads: 'uploads'
+      config: 'config'
+      coda_cache: 'coda_cache'
 
-    folder_symbolic_links:
+    link_files:
       uploads: 'wp-content/uploads'
       coda_cache: 'wp-content/themes/coda/cache'
 
-    file_symbolic_link:
-      config: 'wp-config.php'
-
-    test_files:
-      config: 'config/#{environment}/wp-config.php'
-
-
-### Symfony
-
-  On proccess...
-
-## Ruby
-
-### Rails
-
-  On proccess...
+```
 
 # Contributing to kikubari
 

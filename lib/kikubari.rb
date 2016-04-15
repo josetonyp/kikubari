@@ -36,7 +36,7 @@ module Kikubari
     private
 
     def get_deployer config
-      eval(deployer_class).new(config)
+      eval(config.get_deployer_class).new(config)
     end
 
 

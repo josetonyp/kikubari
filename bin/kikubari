@@ -39,65 +39,34 @@ loop do
     end
 end
 
-  if (!ARGV.first.nil? and File.directory? ARGV.first.to_s)
-      folder = ARGV.first.to_s
-  else
-
-    begin
-
+if (!ARGV.first.nil? and File.directory? ARGV.first.to_s)
+    folder = ARGV.first.to_s
+else
+  begin
     print "Please insert the project folder to deploy: "
     folder = gets.chomp
+  end until begin
 
-    end until begin
+  ##FileUtils.cd folder
+  puts "Deploying to #{folder}"
+  true
 
-            ##FileUtils.cd folder
-            puts "Deploying to #{folder}"
-            true
-          rescue Exception => e
-            print e.message
-            puts e.backtrace.inspect
-            false
-          end
-
+  rescue Exception => e
+    print e.message
+    puts e.backtrace.inspect
+    false
   end
+end
 
-
+folder = Pathname.new(folder).realpath
 p "Deploying to #{ Pathname.new( folder ).realpath }/..."
+p "Deploying ..."
 
-
-  if( !ARGV[1].nil? )
-
-      env_folder = ARGV[1].to_s
-
-  else
-
-    begin
-
-    print "Production [1] or preproduction [2] ? (1,2) : "
-    environment = gets.chomp
-
-    end until begin
-                if environment =~ /1|2/
-                  true
-                else
-                  false
-                end
-              rescue Exception => e
-                      print e.message
-                      puts e.backtrace.inspect
-                      false
-              end
-
-    case environment
-      when "1"
-        env_folder = "production"
-      when "2"
-        env_folder = "preproduction"
-    end
-
- end
-
-p "Deploying on environment < #{ env_folder } >..."
-
-Kikubari::Deploy.new(Kikubari::Deploy::Configuration.new( "#{folder}/deploy.yml", :deploy_folder => folder, :debug => debug, :dry_run => dry_run , :environment => env_folder, :rollback => rollback ))
+Kikubari::Deploy.new(
+    Kikubari::Deploy::Configuration.new(
+      "#{folder}/deploy.yml",
+      deploy_folder:  folder,
+      debug: debug,
+      dry_run: dry_run,
+      rollback: rollback ))
 

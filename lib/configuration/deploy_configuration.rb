@@ -10,7 +10,6 @@ module Kikubari
       attr_accessor :deploy_folder,
         :debug,
         :dry_run,
-        :environment,
         :rollback,
         :deploy_file,
         :config,
