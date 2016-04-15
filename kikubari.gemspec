@@ -6,7 +6,7 @@
 
 Gem::Specification.new do |s|
   s.name = "kikubari"
-  s.version = "0.0.3"
+  s.version = "0.0.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
@@ -54,28 +54,10 @@ Gem::Specification.new do |s|
   s.rubygems_version = "2.5.1"
   s.summary = "Naive multiframework deploy system"
 
-  if s.respond_to? :specification_version then
-    s.specification_version = 4
+  s.add_development_dependency('pry')
+  s.add_development_dependency('rspec')
+  s.add_development_dependency('rake')
 
-    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<kikubari>, [">= 0"])
-      s.add_development_dependency(%q<pry>, [">= 0"])
-      s.add_development_dependency(%q<rspec>, [">= 0"])
-      s.add_development_dependency(%q<bundler>, [">= 0"])
-      s.add_development_dependency(%q<jeweler>, [">= 0"])
-    else
-      s.add_dependency(%q<kikubari>, [">= 0"])
-      s.add_dependency(%q<pry>, [">= 0"])
-      s.add_dependency(%q<rspec>, [">= 0"])
-      s.add_dependency(%q<bundler>, [">= 0"])
-      s.add_dependency(%q<jeweler>, [">= 0"])
-    end
-  else
-    s.add_dependency(%q<kikubari>, [">= 0"])
-    s.add_dependency(%q<pry>, [">= 0"])
-    s.add_dependency(%q<rspec>, [">= 0"])
-    s.add_dependency(%q<bundler>, [">= 0"])
-    s.add_dependency(%q<jeweler>, [">= 0"])
-  end
+  s.add_dependency('git')
 end
 

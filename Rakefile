@@ -1,7 +1,7 @@
 # encoding: utf-8
-
 require 'rubygems'
 require 'bundler'
+
 begin
   Bundler.setup(:default, :development)
 rescue Bundler::BundlerError => e
@@ -10,25 +10,6 @@ rescue Bundler::BundlerError => e
   exit e.status_code
 end
 require 'rake'
-
-require 'jeweler'
-Jeweler::Tasks.new do |gem|
-  # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
-  gem.name = "kikubari"
-  gem.homepage = "https://github.com/josetonyp/kikubari"
-  gem.license = "MIT"
-  gem.summary = %Q{ Naive multiframework deploy system }
-  gem.description = %Q{ Naive multiframework deployer for handle server deployments with some care about the code replacement. Also an experimental project.}
-  gem.email = "josetonyp@latizana.com"
-  gem.authors = ["Jose Antonio Pio Gil"]
-
-  gem.bindir = 'bin'
-  gem.executables = ['kikubari']
-  gem.default_executable = 'kikubari'
-
-  # dependencies defined in Gemfile
-end
-Jeweler::RubygemsDotOrgTasks.new
 
 require 'rspec/core'
 require 'rspec/core/rake_task'
