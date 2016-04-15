@@ -15,7 +15,6 @@ describe Kikubari::Deploy::GitDeployer do
 
   before :all do
     clear_target_project
-
   end
 
   it "clones the repository in the version folder" do
@@ -28,5 +27,6 @@ describe Kikubari::Deploy::GitDeployer do
     deployer.create_deploy_structure
     deployer.deploy
     expect(Dir.exist?("#{deployer.config.env_time_folder}/.git")).to be_falsy
+    binding.pry
   end
 end

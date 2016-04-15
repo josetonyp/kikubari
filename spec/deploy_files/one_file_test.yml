@@ -3,9 +3,9 @@ config:
 
 do:
   folder_structure:
-    config: 'config/#{environment}'
-      
+    config: 'config'
+
   # Files to be tested before deployment. This files must exists or deployment will rise an exception
   test_files:
-    config: 'config/#{environment}/databases.yml'
+    config: 'config/databases.yml'
 

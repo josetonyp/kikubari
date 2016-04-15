@@ -1,7 +1,7 @@
 # Deploy example sheet for a Symfony 1.4 and MySQL project
 #
 # Author::    Jose A Pio  (mailto:josetonyp@latizana.com)
-# Copyright:: Copyright (c) 2011 
+# Copyright:: Copyright (c) 2011
 # License::   Distributes under the same terms as Ruby
 #
 
@@ -12,38 +12,38 @@ config:
   origin: "git@github.com:xxx"
   branch: master
   history_limit: 10
-  # Databases for projects are optionals. In case of having one plase fill the next section to configure the backup process  
+  # Databases for projects are optionals. In case of having one plase fill the next section to configure the backup process
   database:
     backup: true
     dirver: mysql
     user: root
-    pass: 
-    
-    
+    pass:
+
+
 ## Task actions for deployers
-## At versión 1 deployers should know the task order 
+## At versión 1 deployers should know the task order
 do:
 
   # Folder structure defining the backup and mantainance folder behind the deployment process
+  and it relative symlink inside the release folder
+  # folder_structure:
+  #  folder_name: linked_name
+  #  translates into:
+  #   /deploy_path/'folder_name': /release_path/'linked_name'
   folder_structure:
-    backup_mysql: 'backups/mysql/#{environment}'
-    backup_files: 'backups/files/#{environment}'
-    cache: 'cache/#{environment}'
-    log: 'log/#{environment}'
-    uploads: 'uploads/#{environment}'
-    config: 'config/#{environment}'
+    backup_mysql: 'backups/mysql'
+    backup_files: 'backups/files'
+    cache: 'cache'
+    log: 'log'
+    uploads: 'web/uploads'
+    config: ''
 
-  # Folder links from project folder and matainance folders
-  folder_symbolic_links:
-    cache: cache
-    log: log
-    uploads: web/uploads
+  # Link this files from structure foldes into the release folder path.
+  # link_files:
+  #  folder_name: source_file_name
+  #  translates into:
+  #   /deploy_path/'source_file_name': /release_path/'folder_name'
+  link_files:
+    'config/databases.yml': 'databases.yml'
 
-  # Links to be build from mantainance falders files and project files.
-  file_symbolic_link:
-    config: 'config/databases.yml'
-      
-  # Files to be tested before deployment. This files must exists or deployment will rise an exception
-  test_files:
-    config: 'config/#{environment}/databases.yml'
 

@@ -1,3 +1,6 @@
+require 'json'
+require 'ostruct'
+
 # Describe the deployment process for each deployer
 #
 # Basically a deployment consist on gathering the code from a <b>Repository</b> writed in a <b>Framework</b> (In some language) and copying on deployment folder.
@@ -22,24 +25,11 @@ module Kikubari
       # Create te the folder structure as is in the YAML
       #
       def create_structure
-        @config.do["folder_structure"].each do |command|
-          unless File.directory? command.first[1]
-            @logger.print "Creating Structure folder: #{command.first[1]}"
-            FileUtils.mkdir_p command.first[1]
+        @config.do.folder_structure.each_pair do |folder, target_folder|
+          unless !target_folder.empty? && File.directory?(@config.deploy_folder.join(folder.to_s))
+            @logger.print "Creating Structure folder: #{folder}"
+            FileUtils.mkdir_p @config.deploy_folder.join(folder.to_s)
           end
-        end
-        self
-      end
-
-
-      ##
-      # Create the environment folder as requested in the configuration
-      #
-      def create_environment_folder
-        environment = @config.environment
-        unless File.directory? @config.environment_folder
-          @logger.print "Creating Environment folder: #{ @config.environment_folder}"
-          FileUtils.mkdir_p  @config.environment_folder
         end
         self
       end
@@ -47,7 +37,7 @@ module Kikubari
       ##
       # Create the folder where you will deploy the actual version of the code based on the configuration
       #
-      def create_version_folder
+      def create_release_folder
         FileUtils.mkdir_p(@config.env_time_folder) unless File.directory? @config.env_time_folder
         self
       end
@@ -56,10 +46,8 @@ module Kikubari
       # Create the current symlink to the deploy version folder
       #
       def create_current_symlink_folder
-        destination = @config.current_deploy_folder
-        origin =  Pathname.new( @config.env_time_folder ).relative_path_from( Pathname.new( @config.current_deploy_folder.gsub(/\/[^\/]*?$/, "") ) ).to_s
-        FileUtils.rm_f(destination) if File.symlink?(destination)
-        FileUtils.ln_s origin, destination
+        FileUtils.rm_f(@config.current_deploy_folder) if File.symlink?(@config.current_deploy_folder)
+        FileUtils.ln_s @config.env_time_folder, @config.current_deploy_folder
         self
       end
 
@@ -68,10 +56,9 @@ module Kikubari
       # Test if selected file already exist
       #
       def test_files
-        @config.do["test_files"].each do |command|
-          y command
-          unless File.exist? command.first[1]
-            raise "Please verify this file exist: #{command.first[1]}"
+        @config.do.link_files.each_pair do |source, target|
+          unless File.exist? @config.deploy_folder.join(source.to_s)
+            raise ArgumentError, "Please verify this file exist: #{@config.deploy_folder.join(source.to_s)}"
           end
         end
         self
@@ -81,30 +68,28 @@ module Kikubari
       # Create the Symlinked folders
       #
       def create_sylinked_folders
-          @config.do["folder_symbolic_links"].each do |folder|
-            @logger.print "- linking: #{@config.env_time_folder}/#{folder[1]}"
-            raise "Folder: #{@config.env_time_folder}/#{folder[1]} already exists and the symlink can't be created" if File.directory?("#{@config.env_time_folder}/#{folder[1]}")
-            create_symlink( folder )
-          end
-          self
+        @config.do.folder_structure.each_pair do |folder, target_folder|
+          next if target_folder.empty?
+          @logger.print "- linking: #{@config.env_time_folder}/#{target_folder}"
+          raise "Folder: #{@config.env_time_folder.join(target_folder.to_s)} already exists and the symlink can't be created" if File.directory?(@config.env_time_folder.join(target_folder.to_s))
+          create_symlink( @config.deploy_folder.join(folder.to_s), @config.env_time_folder.join(target_folder.to_s) )
+        end
+        self
       end
 
       ##
       # Execute creation of symlinked folder
       #
-      def create_symlink( folder )
-        destination = "#{@config.env_time_folder}/#{folder[1]}"
-        raise ArgumentError , "Origin folder #{@config.get_structure_folder(folder[0])} is not a valid folder" unless File.directory?("#{@config.get_structure_folder(folder[0])}")
-        origin = Pathname.new( "#{@config.get_structure_folder(folder[0])}" ).relative_path_from( Pathname.new( destination.gsub(/\/[^\/]*?$/, "") ) ).to_s  ## Origin as a relative path from destination
-        FileUtils.ln_s origin, destination
+      def create_symlink( folder, target_folder )
+        raise ArgumentError , "Origin folder #{folder} is not a valid folder" unless File.directory?(folder)
+        FileUtils.ln_s folder, target_folder
       end
+
 
       def create_symlinked_files
         @logger.print "Creating Files symbolic links"
-        @config.do["file_symbolic_link"].each do |folder|
-          destination = "#{@config.env_time_folder}/#{folder[1]}"
-          origin = Pathname.new( "#{@config.get_test_file(folder[0])}" ).relative_path_from(Pathname.new( destination.gsub(/\/[^\/]*?$/, "") )).to_s
-          FileUtils.ln_s  origin , destination
+        @config.do.link_files.each_pair do |source, target|
+          FileUtils.ln_s(@config.deploy_folder.join(source.to_s), @config.env_time_folder.join(target.to_s))
         end
       end
 
@@ -113,8 +98,7 @@ module Kikubari
       # Create deployment structure
       #
       def create_deploy_structure
-        create_structure if @config.do.has_key?("folder_structure") && !@config.do["folder_structure"].empty?
-        create_environment_folder.create_version_folder
+        create_structure if @config.do.folder_structure
         self
       end
 
@@ -127,7 +111,7 @@ module Kikubari
 
 
       def has_after_deploy_run_commands
-        @config.after.has_key?("run") && !@config.after["run"].empty?
+        @config.after && @config.after.run && !@config.after.run.empty?
       end
 
       ##
@@ -137,22 +121,21 @@ module Kikubari
         return unless has_after_deploy_run_commands
         out = Array.new
         @logger.head "Executing After Deploy"
-        @config.after["run"].each do |run_task|
+        @config.after.run.each do |run_task|
           out.push(execute_shell(run_task) )
         end
         out
       end
 
-
       def has_before_deploy_run_commands
-        @config.before.has_key?("run") && !@config.before["run"].empty?
+        @config.before && @config.before.run && !@config.before.run.empty?
       end
 
       def before_deploy_run
         return unless has_before_deploy_run_commands
         out = Array.new
         @logger.head "Executing Before Deploy"
-        @config.before["run"].each do |run_task|
+        @config.before.run.each do |run_task|
           out.push(execute_shell(run_task) )
         end
         out
@@ -160,7 +143,7 @@ module Kikubari
 
       def execute_shell(command)
         @logger.run(command, @config.env_time_folder)
-        temp = capture_stderr "cd #{@config.env_time_folder} ; #{command} "
+        temp = capture_stderr "cd #{@config.env_time_folder.to_s.strip} && #{command} "
         @logger.result(temp[:stdout]) if temp[:stdout] != ""
         @logger.error(temp[:stderr]) if temp[:stderr] != ""
         temp
@@ -178,10 +161,10 @@ module Kikubari
       def deploy
           before_deploy_run
         @logger.head "Executing Deploy"
-        test_files  if @config.do.has_key?("test_files") && !@config.do["test_files"].empty?
+        test_files  if @config.do.test_files && !@config.do["test_files"].empty?
           do_deploy
-        create_sylinked_folders if @config.do.has_key?("folder_symbolic_links") && !@config.do["folder_symbolic_links"].empty?
-        create_symlinked_files if @config.do.has_key?("file_symbolic_link") && !@config.do["file_symbolic_link"].empty?
+        create_sylinked_folders if @config.do.folder_symbolic_links && !@config.do["folder_symbolic_links"].empty?
+        create_symlinked_files if @config.do.file_symbolic_link && !@config.do["file_symbolic_link"].empty?
         create_current_symlink_folder
         rotate_folders
           after_deploy_run

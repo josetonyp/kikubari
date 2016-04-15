@@ -11,10 +11,5 @@ do:
 
   # Folder structure defining the backup and mantainance folder behind the deployment process
   folder_structure:
-    cache: 'cache/#{environment}'
-    log: 'log/#{environment}'
-
-  # Folder links from project folder and matainance folders
-  folder_symbolic_links:
-    cache: cache
-    log: log
+    cache: 'cache'
+    log: 'log'

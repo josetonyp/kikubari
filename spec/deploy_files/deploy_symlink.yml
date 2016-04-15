@@ -14,24 +14,17 @@ do:
 
   # Folder structure defining the backup and mantainance folder behind the deployment process
   folder_structure:
-    cache: 'cache/#{environment}'
-    config: 'config/#{environment}'
+    cache: 'cache'
+    config: 'config'
+    blank: ''
 
-  # Folder links from project folder and matainance folders
-  folder_symbolic_links:
-    #name: #destination_name
-    cache: cache
-    config: config
-
-  # Files to be tested before deployment. This files must exists or deployment will rise an exception
-  # named_file: origin
-  test_files:
-    config: 'config/#{environment}/databases.yml'
-
-  # Links to be build from tested files. Only tested files can be converted in symlinks to the project
-  # named_file: destination
-  file_symbolic_link:
-    config: 'config/databases.yml'
+  # Link this files from structure foldes into the release folder path.
+  # link_files:
+  #  folder_name: source_file_name
+  #  translates into:
+  #   /deploy_path/'source_file_name': /release_path/'folder_name'
+  link_files:
+    'config/databases.yml': 'databases.yml'
 
 after:
   run:
