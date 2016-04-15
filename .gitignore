@@ -50,3 +50,4 @@ pkg
 **.DS_Store
 .rvmrc
 .ruby-*
+spec/project_dfolder

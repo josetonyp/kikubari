@@ -1,94 +1,146 @@
-require File.expand_path( File.join( File.dirname(__FILE__), '..', 'spec_helper.rb' ) ).to_s
+require 'spec_helper'
 
 describe Kikubari::Deploy::Deployer do
 
-  before :each do
-    @folder = "test/project_dfolder"
-    @df_folder = "test/deploy_files"
-    `rm -fR #{@folder}/*`
-
-    @config = Kikubari::Deploy::Configuration.new( "#{@df_folder}/deploy_symlink.yml", :deploy_folder => @folder, :debug => false, :dry_run => false , :environment => "production", :rollback => false )
-    @deployer = Kikubari::Deploy::Deployer.new(@config)
-
+  let(:config) do
+    Kikubari::Deploy::Configuration.new(
+      "#{RSpec.configuration.deploy_files}/deploy_symlink.yml",
+      deploy_folder: RSpec.configuration.target_folder,
+      debug: false,
+      dry_run: false,
+      environment: 'production',
+      rollback: false)
   end
 
-  after :all do
-    `rm -fR #{@folder}/*`
+  subject(:subject) { described_class.new(config) }
+
+  before :all do
+    clear_target_project
   end
 
-  it "should create an environment folder" do
-    @deployer.create_environment_folder.should satisfy{ |deployer| File.directory?(deployer.config.environment_folder) }
-  end
+  context 'Folder Structure' do
 
-  it "should create a deploy version folder" do
-      @deployer.create_version_folder.should satisfy{ |deployer| File.directory?(deployer.config.env_time_folder) }
-  end
+    it "creates an environment folder to host the structure" do
+      expect(subject.create_environment_folder).to satisfy do |deployer|
+        File.directory?(deployer.config.environment_folder)
+      end
+    end
 
-  it "should create the symlink to current folder" do
-      @deployer.create_version_folder.create_current_symlink_folder.should satisfy{ |deployer| File.symlink?(deployer.config.current_deploy_folder) }
-  end
+    it "creates a target version folder with a the current time stamp as name" do
+      expect(subject.create_version_folder).to satisfy do |deployer|
+        File.directory?(deployer.config.env_time_folder)
+      end
+    end
 
-  it "sould create a folder in the folder structure" do
-    @deployer.create_environment_folder.create_version_folder.create_current_symlink_folder
-    @deployer.create_structure.should satisfy{ |deployer| File.directory?( "#{deployer.config.deploy_folder}/cache/#{@config.environment}") }
-  end
+    it "createa a symlink 'current' to the actual target version folder" do
+      expect(subject.create_version_folder.create_current_symlink_folder).to satisfy do |deployer|
+        File.symlink?(deployer.config.current_deploy_folder)
+      end
+    end
 
-  it "should create a Symlinked Strcuture folder" do
-    @deployer.create_environment_folder.create_version_folder.create_current_symlink_folder
-    @deployer.create_structure.create_sylinked_folders.should satisfy{ |deployer| File.symlink?( "#{deployer.config.env_time_folder}/cache") }
-  end
+    # Giving a folder structure like:
+    # From file: spec/deploy_files/deploy_symlink.yml
+    #
+    #  folder_structure:
+    #    cache: 'cache/#{environment}'
+    #    config: 'config/#{environment}'
+    #
+    # Example:
+    # project:
+    #   cache
+    #     [environment]
+    #   config
+    #     [environment]
+    #   [environment]
+    #     [version_folder]
+    #       cache: Symlink to cache/[environment]
+    #       config: Symlink to config/[environment]
+    #     current: Symlink to [version_folder]
+    #
+    it "creates the cache and condig folder inside" do
+      subject.tap do |deployer|
+        deployer.create_environment_folder
+        deployer.create_version_folder
+        deployer.create_current_symlink_folder
 
-  it "should not create the symlinked folder is folder already exist" do
-    @deployer.create_environment_folder.create_version_folder.create_current_symlink_folder
-    @deployer.create_structure
-    FileUtils.mkdir_p "#{@config.env_time_folder}/cache"
-    expect {
-      @deployer.create_sylinked_folders
-    }.should raise_error
-  end
+        expect(deployer.create_structure).to satisfy do
+          File.directory?("#{deployer.config.deploy_folder}/cache/#{deployer.config.environment}") &&
+          File.directory?("#{deployer.config.deploy_folder}/config/#{deployer.config.environment}")
+        end
+      end
+    end
 
-  it "should verify a file in the folder and raise an error" do
-    @deployer.create_environment_folder.create_version_folder.create_current_symlink_folder
-    expect{@deployer.test_files}.should raise_error
-  end
+    it "creates a symlink to inside the version folder pointing to the corresponding folder inside the structure" do
+      subject.tap do |deployer|
+        deployer.create_environment_folder
+        deployer.create_version_folder
+        deployer.create_structure
 
-  it "should verify a file in the folder" do
-    @deployer.create_environment_folder.create_version_folder.create_current_symlink_folder
-    expect{@deployer.test_files}.should raise_error
-  end
+        expect(deployer.create_sylinked_folders).to satisfy do
+          File.symlink?( "#{deployer.config.env_time_folder}/cache") &&
+          File.symlink?( "#{deployer.config.env_time_folder}/config")
+        end
+      end
+    end
 
-  it "should create a symlink file from tested files" do
-    @deployer.create_deploy_structure
-    `mkdir -p #{@config.env_time_folder}/config` ## Faking the canfig folder that should come with the repository
-    `echo "hola" >> #{@folder}/config/#{@config.environment}/databases.yml`
-    @deployer.create_symlinked_files.should satisfy do |deployer|
-      File.symlink?( "#{@config.env_time_folder}/config/databases.yml")
+    it "should not create the symlinked folder is folder already exist" do
+      subject.create_environment_folder.create_version_folder.create_current_symlink_folder
+      subject.create_structure
+      FileUtils.mkdir_p "#{config.env_time_folder}/cache"
+      expect {
+        subject.create_sylinked_folders
+      }.to raise_error
     end
   end
 
-  it "should execute the after run tasks" do
-    @deployer.create_deploy_structure
-    `mkdir -p #{@config.env_time_folder}/config` ## Faking the canfig folder that should come with the repository
-    `echo "hola" >> #{@folder}/config/#{@config.environment}/databases.yml`
-    @deployer.after_deploy_run.should satisfy { |deployer| File.directory?("#{@config.env_time_folder}/new_folder") }
+  context 'File linking' do
+    it "verifies a file in the folder and raise an error" do
+      subject.create_environment_folder.create_version_folder.create_current_symlink_folder
+      expect{subject.test_files}.to raise_error
+    end
+
+    it "verifies a file in the folder" do
+      subject.create_environment_folder.create_version_folder.create_current_symlink_folder
+      expect{subject.test_files}.to raise_error
+    end
+
+    it "creates a symlink file from tested files" do
+      subject.create_deploy_structure
+      ## Faking the config folder that should come with the repository
+      FileUtils.mkdir_p "#{config.env_time_folder}/config"
+      `echo "DB data...." >> #{config.deploy_folder}/config/#{config.environment}/databases.yml`
+      subject.create_symlinked_files.should satisfy do |deployer|
+        File.symlink?( "#{config.env_time_folder}/config/databases.yml")
+      end
+    end
   end
 
-  it "should capture STDERR messages in a variable is command is not valid" do
-    @deployer.create_deploy_structure
-    @deployer.config.after['run'] = [ 'This is not a command' ]
-    out = @deployer.after_deploy_run
-    out.count.should == 1
-    out[0][:stdout].should == ""
-    out[0][:stderr].should_not == ""
-  end
+  context 'Execution' do
+    it "should execute the after run tasks" do
+      subject.create_deploy_structure
+      FileUtils.mkdir_p "#{config.env_time_folder}/config"
+      `echo "DB data..." >> #{config.deploy_folder}/config/#{config.environment}/databases.yml`
+      subject.after_deploy_run.should satisfy do |deployer|
+        File.directory?("#{config.env_time_folder}/new_folder")
+      end
+    end
 
-  it "should not capture STDERR messages in a variable if command is valid" do
-    @deployer.create_deploy_structure
-    @deployer.config.after['run'] = [ 'ls -lah' ]
-    out = @deployer.after_deploy_run
-    out.count.should == 1
-    out[0][:stdout].should_not == ""
-    out[0][:stderr].should == ""
-  end
+    it "should capture STDERR messages in a variable is command is not valid" do
+      subject.create_deploy_structure
+      subject.config.after['run'] = [ 'This is not a command' ]
+      out = subject.after_deploy_run
+      out.count.should == 1
+      out[0][:stdout].should == ""
+      out[0][:stderr].should_not == ""
+    end
 
+    it "should not capture STDERR messages in a variable if command is valid" do
+      subject.create_deploy_structure
+      subject.config.after['run'] = [ 'ls -lah' ]
+      out = subject.after_deploy_run
+      out.count.should == 1
+      out[0][:stdout].should_not == ""
+      out[0][:stderr].should == ""
+    end
+  end
 end

@@ -1,20 +1,23 @@
-require 'date'
-require 'getoptlong'
-require 'fileutils'
-require 'yaml'
-require 'pathname'
-require 'rubygems'
-require "stringio"
-require 'open3'
-require 'git'
+require 'pry'
+require 'kikubari'
 
+root_folder = Pathname.new(File.expand_path(__dir__))
 
+module ProjectHelper
+  def clear_target_project
+    FileUtils.mkdir_p(RSpec.configuration.target_folder) unless Dir.exist?(RSpec.configuration.target_folder)
+    FileUtils.rm_rf(Dir.glob("#{RSpec.configuration.target_folder}/*"))
+  end
+end
 
-require File.join(File.dirname(__FILE__), "..", "lib", "configuration", "deploy_configuration")
-require File.join(File.dirname(__FILE__), "..", "lib", "deploy_dir" )
-require File.join(File.dirname(__FILE__), "..", "lib", "deploy_logger" )
-require File.join(File.dirname(__FILE__), "..", "lib", "kikubari" )
-require File.join(File.dirname(__FILE__), "..", "lib", "deployer", "deployer" )
-require File.join(File.dirname(__FILE__), "..", "lib", "deployer", "deployer_git" )
-require File.join(File.dirname(__FILE__), "..", "lib", "deployer", "deployer_git_symfony" )
-require File.join(File.dirname(__FILE__), "..", "lib", "deployer", "deployer_git_wordpress" )
+RSpec.configure do |c|
+  c.add_setting :src_folder
+  c.add_setting :target_folder
+  c.add_setting :deploy_files
+
+  c.src_folder = root_folder.join('project')
+  c.target_folder = root_folder.join('project_dfolder')
+  c.deploy_files = root_folder.join('deploy_files')
+  c.include ProjectHelper
+
+end

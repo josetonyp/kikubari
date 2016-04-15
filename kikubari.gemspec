@@ -5,12 +5,12 @@
 
 Gem::Specification.new do |s|
   s.name = "kikubari"
-  s.version = "0.0.3"
+  s.version = "0.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jose Antonio Pio Gil"]
   s.date = "2012-05-23"
-  s.description = " Naive multiframework deployer for handle server deployments with some care about the code replacement. Also an experimental project."
+  s.description = "Naive multiframework deployer for handle server deployments with some care about the code replacement. Also an experimental project."
   s.email = "josetonyp@latizana.com"
   s.executables = ["kikubari"]
   s.extra_rdoc_files = [
@@ -21,8 +21,6 @@ Gem::Specification.new do |s|
     ".document",
     "Gemfile",
     "Gemfile.lock",
-    "LICENSE.txt",
-    "README.rdoc",
     "Rakefile",
     "VERSION",
     "bin/kikubari",
@@ -35,49 +33,33 @@ Gem::Specification.new do |s|
     "lib/deployer/deployer_git_symfony.rb",
     "lib/deployer/deployer_git_wordpress.rb",
     "lib/kikubari.rb",
-    "test/deploy_files/databases.yml",
-    "test/deploy_files/deploy.yml",
-    "test/deploy_files/deploy_git.yml",
-    "test/deploy_files/deploy_git_test_file.yml",
-    "test/deploy_files/deploy_symlink.yml",
-    "test/deploy_files/empty.yml",
-    "test/deploy_files/one_file_test.yml",
-    "test/deploy_files/one_folder.yml",
-    "test/helper.rb",
-    "test/lib/deploy_spec.rb",
-    "test/lib/deployers/git.rb",
-    "test/lib/deployers/mysql_backup.rb",
-    "test/lib/deployers/symfony_git.rb",
-    "test/spec_helper.rb"
+    "spec/deploy_files/databases.yml",
+    "spec/deploy_files/deploy.yml",
+    "spec/deploy_files/deploy_git.yml",
+    "spec/deploy_files/deploy_git_spec_file.yml",
+    "spec/deploy_files/deploy_symlink.yml",
+    "spec/deploy_files/empty.yml",
+    "spec/deploy_files/one_file_spec.yml",
+    "spec/deploy_files/one_folder.yml",
+    "spec/helper.rb",
+    "spec/lib/deploy_spec.rb",
+    "spec/lib/deployers/git.rb",
+    "spec/lib/deployers/mysql_backup.rb",
+    "spec/lib/deployers/symfony_git.rb",
+    "spec/spec_helper.rb"
   ]
   s.homepage = "https://github.com/josetonyp/kikubari"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.17"
-  s.summary = "Naive multiframework deploy system"
+  s.rubygems_version = ">=1.8.7"
+  s.summary = "Naive application deploy system"
 
-  if s.respond_to? :specification_version then
-    s.specification_version = 3
+  s.add_development_dependency('pry')
+  s.add_development_dependency('rspec')
+  s.add_development_dependency('bundler')
+  s.add_development_dependency('jeweler')
 
-    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_development_dependency(%q<rspec>, ["~> 1.3.1"])
-      s.add_development_dependency(%q<bundler>, [">= 0"])
-      s.add_development_dependency(%q<jeweler>, ["~> 1.8.3"])
-      s.add_development_dependency(%q<rcov>, [">= 0"])
-      s.add_development_dependency(%q<git>, [">= 0"])
-    else
-      s.add_dependency(%q<rspec>, ["~> 1.3.1"])
-      s.add_dependency(%q<bundler>, [">= 0"])
-      s.add_dependency(%q<jeweler>, ["~> 1.8.3"])
-      s.add_dependency(%q<rcov>, [">= 0"])
-      s.add_dependency(%q<git>, [">= 0"])
-    end
-  else
-    s.add_dependency(%q<rspec>, ["~> 1.3.1"])
-    s.add_dependency(%q<bundler>, [">= 0"])
-    s.add_dependency(%q<jeweler>, ["~> 1.8.3"])
-    s.add_dependency(%q<rcov>, [">= 0"])
-    s.add_dependency(%q<git>, [">= 0"])
-  end
+  s.add_dependency 'git'
+
 end
 

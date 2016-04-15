@@ -1,29 +1,32 @@
-require File.expand_path( File.join( File.dirname(__FILE__), '..', '..', 'spec_helper.rb' ) ).to_s
+require 'spec_helper'
 
 describe Kikubari::Deploy::GitDeployer do
-
-  before :each do
-    @folder = "test/project_dfolder"
-    @df_folder = "test/deploy_files"
-    `rm -fR #{@folder}/*`
+  let(:git_config) do
+    Kikubari::Deploy::Configuration.new(
+      "#{RSpec.configuration.deploy_files}/deploy_git.yml",
+      deploy_folder: RSpec.configuration.target_folder,
+      debug: false,
+      dry_run: false,
+      environment: 'production',
+      rollback: false)
   end
 
-  after :all do
-    `rm -fR #{@folder}/*`
+  let(:deployer) { Kikubari::Deploy::GitDeployer.new(git_config) }
+
+  before :all do
+    clear_target_project
+
   end
 
-  it "should clone the repository in the version folder" do
-    @config = Kikubari::Deploy::Configuration.new( "#{@df_folder}/deploy_git.yml", :deploy_folder => @folder, :debug => false, :dry_run => false , :environment => "production", :rollback => false )
-    @deployer = Kikubari::Deploy::GitDeployer.new(@config)
-    y @deployer.create_deploy_structure.deploy.should satisfy { |deployer| File.directory?( "#{deployer.config.env_time_folder}/.git" ) }
+  it "clones the repository in the version folder" do
+    deployer.create_deploy_structure
+    deployer.deploy
+    expect(Dir.glob("#{deployer.config.env_time_folder}/*").count).to be > 0
   end
 
-  it "should create an symlinked file" do
-    @config = Kikubari::Deploy::Configuration.new( "#{@df_folder}/deploy_git_test_file.yml", :deploy_folder => @folder, :debug => false, :dry_run => false , :environment => "production", :rollback => false )
-    @deployer = Kikubari::Deploy::GitDeployer.new(@config)
-    @deployer.create_deploy_structure
-      `echo "hola" >> #{@folder}/log/#{@config.environment}/test.yml`
-    @deployer.deploy.should satisfy { |deployer| File.readable?( "#{deployer.config.env_time_folder}/test/test.yml" ) }
+  it "removes the .git folder after cloning" do
+    deployer.create_deploy_structure
+    deployer.deploy
+    expect(Dir.exist?("#{deployer.config.env_time_folder}/.git")).to be_falsy
   end
-
 end

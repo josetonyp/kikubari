@@ -15,10 +15,9 @@ module Kikubari
       def do_deploy
         branch = @config.config["branch"] || "master"
         %x(git clone #{@config.config["origin"]} -b #{branch} #{@config.env_time_folder} )
+        FileUtils.rm_rf("#{@config.env_time_folder}/.git")
       end
 
     end
-
   end
-
 end

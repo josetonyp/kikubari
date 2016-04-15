@@ -7,7 +7,21 @@ module Kikubari
   class Deploy
     class Configuration
 
-      attr_accessor :deploy_folder, :debug, :dry_run, :environment, :rollback, :deploy_file, :config, :do , :environment_folder, :env_time_folder, :current_deploy_folder, :date_folder, :after, :before
+      attr_accessor :deploy_folder,
+        :debug,
+        :dry_run,
+        :environment,
+        :rollback,
+        :deploy_file,
+        :config,
+        :do ,
+        :environment_folder,
+        :env_time_folder,
+        :current_deploy_folder,
+        :date_folder,
+        :after,
+        :before,
+        :verbose
 
       def initialize( file , *params )
 
@@ -25,9 +39,10 @@ module Kikubari
         raise ArgumentError, "There is no params for deploy" if params.size == 0
 
         ## verify all arguments for params are present
+        @verbose = false
 
-        params.first.each do |pair|
-          instance_variable_set "@#{pair[0]}".strip, pair[1]
+        params.first.each do |key,value|
+          instance_variable_set "@#{key}".strip, value
         end
 
         unless File.directory? @deploy_folder

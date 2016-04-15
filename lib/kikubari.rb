@@ -1,5 +1,16 @@
-module Kikubari
+require 'fileutils'
+require 'yaml'
+require 'git'
+require 'open3'
 
+require "configuration/deploy_configuration"
+require "deployer/deployer"
+require "deployer/deployer_git"
+require "deployer/deployer_git_wordpress"
+require "deploy_dir"
+require "deploy_logger"
+
+module Kikubari
   class Deploy
 
     attr_accessor :config
@@ -11,23 +22,21 @@ module Kikubari
     end
 
     def deploy
-      deployer = get_deployer( @config )
-      deployer.create_deploy_structure.deploy
+      get_deployer( @config ).create_deploy_structure.deploy
     end
 
     def rollback
-      p "rollingback"
+      @logger.print "rollingback"
     end
 
     def change( version )
-      p "changing to version #{version}"
+      @logger.print "changing to version #{version}"
     end
 
     private
 
     def get_deployer config
-      deployer_class = config.get_deployer_class
-      eval(deployer_class).new config
+      eval(deployer_class).new(config)
     end
 
 

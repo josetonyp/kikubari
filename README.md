@@ -1,22 +1,23 @@
-= kikubari
+![Build Status](https://travis-ci.org/josetonyp/kikubari.svg?branch=master)
+
+# kikubari
 
 Naive deploy system for deploy agnostic code. Kikubari only take care about repository, folder structure and file configurations. It also will run before an after task from commmand line and log it to the deployment log. I created because I have to maintain a server with PHP and Ruby code with differents framworks: Ruby on Rails, Symfony 1 and 2, pure PHP and Worpress.
 
 If you need a more complex solution maybe you want to take a look on Capistrano. If you want to deploy differents frameworks with differents languages maybe you want to stay here a colaborate.
 
-== Usage:
+## Usage:
 
   Create a *deploy.yml* file in your deploy target folder
   Run *kikubari*:: */path_to_folder* or ./ *"environment_name"*
   Have a beer and see it work
 
-= Examples of a deploy.yml's files
+# Examples of a deploy.yml's files
 
-== PHP
+## PHP
 
-=== Wordpress
+### Wordpress
 
-<<<<<<< HEAD
   config:
     framework: wordpress
     system: git
@@ -40,54 +41,19 @@ If you need a more complex solution maybe you want to take a look on Capistrano.
 
     test_files:
       config: 'config/#{environment}/wp-config.php'
-=======
-config:
-  framework: wordpress
-  system: git
-  origin: "git@github.com:josetonyp/iromegane.git"
-  branch: master
-  history_limit: 10
-
-do:
-  folder_structure:
-    log: 'log/#{environment}'
-    uploads: 'uploads/#{environment}'
-    config: 'config/#{environment}'
-    coda_cache: 'coda_cache/#{environment}'
-
-  folder_symbolic_links:
-    uploads: 'wp-content/uploads'
-    coda_cache: 'wp-content/themes/coda/cache'
-
-  file_symbolic_link:
-    config: 'wp-config.php'
-
-  test_files:
-    config: 'config/#{environment}/wp-config.php'
->>>>>>> df7706639bd2783a2ed921dd1abd544d73b27256
 
 
-=== Symfony
+### Symfony
 
-<<<<<<< HEAD
   On proccess...
-=======
-On proccess...
->>>>>>> df7706639bd2783a2ed921dd1abd544d73b27256
 
-== Ruby
+## Ruby
 
-=== Rails
+### Rails
 
-<<<<<<< HEAD
   On proccess...
-=======
-On proccess...
->>>>>>> df7706639bd2783a2ed921dd1abd544d73b27256
 
-
-
-= Contributing to kikubari
+# Contributing to kikubari
 
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet.
 * Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it.
