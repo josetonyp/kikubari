@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    kikubari (0.1.0)
+    kikubari (0.0.3)
       git
 
 GEM
