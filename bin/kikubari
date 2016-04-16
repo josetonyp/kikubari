@@ -8,7 +8,7 @@ require "stringio"
 require 'open3'
 require 'git'
 
-require '../lib/kikubari'
+require_relative '../lib/kikubari'
 
 ##Globals
 debug, dry_run, rollback = false, false, false

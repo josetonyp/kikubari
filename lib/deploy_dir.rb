@@ -12,15 +12,11 @@ class DeployDir < Dir
   # [+folder+] <b>String</b> A valid folder for deploys
   # [+limit+] <b>Integer</b> Limit the folders left in deploy folder
   def self.rotate_folders(folder , limit)
+    raise(ArgumentError, "Invalid directory #{folder}") unless exists?(folder)
 
-    raise( ArgumentError, "Invalid directory #{ folder }") unless File.directory? folder
-    limit = Integer(limit)
-
-    list = Dir["#{folder}/*"]
-    folders = list.select {|v| v =~ /\d+?/ }
-    was = folders.length
-    FileUtils.rm_f folders.reverse.slice( limit ,  folders.length  ) if folders.length > limit
-    return was - limit
+    glob(folder.join("*")).select {|file| file =~ /\d+?/ }.tap do |list|
+      FileUtils.rm_rf(list.reverse.slice(limit.to_i, list.length)) if list.length > limit.to_i
+    end
   end
 
 
